@@ -337,8 +337,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29b60a6b692ba2344b96c4a91345fa76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsActiveWhite: 0
-  IsActiveBlack: 0
+  IsActiveWhite: 1
+  IsActiveBlack: 1
 --- !u!1 &1839887814
 GameObject:
   m_ObjectHideFlags: 0
