@@ -5,6 +5,7 @@ using UnityEngine;
 public class Board_Manager : MonoBehaviour {
     public static Board_Manager Instance { set; get; }
     private bool[,] allowedMoves { set; get; }
+    public List<string> MoveHistory;
 
     public Pices[,] piceses { set; get; }
     private Pices selectedPices;
@@ -15,6 +16,7 @@ public class Board_Manager : MonoBehaviour {
     private int selectionX = -1;
     private int selectionY = -1;
     public int[] enPassant { set; get; }
+    private bool enPassantMade;
 
     public GameObject Board;
     public List<GameObject> chessPicesPrefabs;
@@ -33,7 +35,6 @@ public class Board_Manager : MonoBehaviour {
 
     private void Start()
     {
-        print("game");
         Instance = this; //making data from this avalablee
         BoardPosition.x += 4; //setting Board Prefab position x
         BoardPosition.z += 4; //setting Board Prefab position x
@@ -69,12 +70,12 @@ public class Board_Manager : MonoBehaviour {
             List<string> Moveses = AllMoves();
             for (int i = 0; i < Moveses.Count; i++)
             {
-                print(Moveses[i]);
+                //print(Moveses[i]);
             }
         } //find all moves
     } //gameloop
 
-    private void SelectPices(int x, int y) 
+    private void SelectPices(int x, int y)
     {
         bool hasPosibleMoves = false; //used to not selecting
         if (piceses[x, y] == null) //if there are no piece where cliked then nothing
@@ -144,6 +145,7 @@ public class Board_Manager : MonoBehaviour {
                 }
                 activeChessPices.Remove(c.gameObject);
                 Destroy(c.gameObject);
+                enPassantMade = true;
             }//destry if enPassan was made
             enPassant[0] = -1;
             enPassant[1] = -1;
@@ -182,7 +184,7 @@ public class Board_Manager : MonoBehaviour {
             {
                 if (x == 2 && y == 0) //white long Rokade
                 {
-                    print(MakeMoveString(selectedPices,x,y));
+                    MoveHistory.Add(MakeMoveString(selectedPices,x,y));
                     //Moving king
                     piceses[selectedPices.CurrentX, selectedPices.CurrentY] = null;
                     selectedPices.transform.position = GetTileCenter(x, y);
@@ -205,7 +207,7 @@ public class Board_Manager : MonoBehaviour {
                 }
                 else if (x == 6 && y == 0) //white short Rokade
                 {
-                    print(MakeMoveString(selectedPices, x, y));
+                    MoveHistory.Add(MakeMoveString(selectedPices, x, y));
                     //Moving king
                     piceses[selectedPices.CurrentX, selectedPices.CurrentY] = null;
                     selectedPices.transform.position = GetTileCenter(x, y);
@@ -227,7 +229,7 @@ public class Board_Manager : MonoBehaviour {
                 }
                 else if (x == 6 && y == 7) //black short Rokade
                 {
-                    print(MakeMoveString(selectedPices, x, y));
+                    MoveHistory.Add(MakeMoveString(selectedPices, x, y));
                     //Moving king
                     piceses[selectedPices.CurrentX, selectedPices.CurrentY] = null;
                     selectedPices.transform.position = GetTileCenter(x, y);
@@ -249,7 +251,7 @@ public class Board_Manager : MonoBehaviour {
                 }
                 else if (x == 2 && y == 7) //black long Rokade
                 {
-                    print(MakeMoveString(selectedPices, x, y));
+                    MoveHistory.Add(MakeMoveString(selectedPices, x, y));
                     //Moving king
                     piceses[selectedPices.CurrentX, selectedPices.CurrentY] = null;
                     selectedPices.transform.position = GetTileCenter(x, y);
@@ -274,7 +276,7 @@ public class Board_Manager : MonoBehaviour {
             } //Rokade
 
             //moving piece and chaning turn 
-            print(MakeMoveString(selectedPices, x, y));
+            MoveHistory.Add(MakeMoveString(selectedPices, x, y));
             piceses [selectedPices.CurrentX, selectedPices.CurrentY] = null;
             selectedPices.transform.position = GetTileCenter(x, y);
             selectedPices.SetPosition (x, y);
@@ -332,14 +334,15 @@ public class Board_Manager : MonoBehaviour {
         activeChessPices.Add (temp); //adding piece to the active list
     } //Spawning one piece in the scene
 
-    private Vector3 GetTileCenter(int x, int y) {
+    private Vector3 GetTileCenter(int x, int y){
         Vector3 origin = Vector3.zero; //initializing 3d vector position
         origin.x += (TILE_SIZE * x) + TILE_OFFSET; //setting x koordinat
         origin.z += (TILE_SIZE* y) + TILE_OFFSET; //setting y koordinat
         return origin;
     } //getiing tile center position
 
-    private void SpawnAllCehssPices() {
+    private void SpawnAllCehssPices(){
+        MoveHistory = new List<string>();
         activeChessPices = new List<GameObject>();
         piceses = new Pices[8,8];
         enPassant = new int[2] {-1,-1};
@@ -406,54 +409,142 @@ public class Board_Manager : MonoBehaviour {
 
     private string MakeMoveString(Pices c, int x, int y)
     {
-        
         if (c.PicesLetter == 'K')
         {
             if (c.CurrentX == 4 && c.CurrentY == 0 && c.HasMoved == false && x == 2 && y == 0)
             {
-                return "O-O-O";
+                return "O-O-O-";
             }
-            if (c.CurrentX == 4 && c.CurrentY == 7 && c.HasMoved == false && x ==2  && y == 7)
+            if (c.CurrentX == 4 && c.CurrentY == 7 && c.HasMoved == false && x == 2 && y == 7)
             {
-                return "O-O-O";
+                return "O-O-O+";
             }
             if (c.CurrentX == 4 && c.CurrentY == 0 && c.HasMoved == false && x == 6 && y == 0)
             {
-                return "O-O";
+                return "O-O---";
             }
             if (c.CurrentX == 4 && c.CurrentY == 7 && c.HasMoved == false && x == 6 && y == 7)
             {
-                return "O-O";
+                return "O-O+++";
             }
         }
+
         
         if (c != null)
         {
             string move = ""; //initialising string
-            if (c.PicesLetter != ' ')
-            {
-                move = move + c.PicesLetter.ToString(); //adding pice letter to string
-            }
-            for (int i = 0; i < activeChessPices.Count; i++) //if more than on pice of the same kind can get to the same position
-            {
-                Pices n = activeChessPices[i].GetComponent<Pices>();
-                if (n.isWhite == c.isWhite && n.PicesLetter == c.PicesLetter && n != c)
-                {
-                    if (n.PossibleMove()[x, y])
-                    {
-                        move = move + XKoordiantes[c.CurrentX, 0];
-                    }
-                }
-            }
-
+            move = move + c.PicesLetter.ToString(); //adding pice letter to string
+            move = move + XKoordiantes[c.CurrentX, 0]; //adding start x koordianl letter to string
+            move = move + (c.CurrentY+1).ToString(); //adding start y koordinat to string
             move = move + XKoordiantes[x, 0]; //adding x koordianl letter to string
             move = move + (y+1).ToString(); //adding y koordinat to string
+            if (piceses[x, y] != null)
+            {
+                move = move + piceses[x, y].PicesLetter;
+            }
+            else if (enPassantMade) 
+            {
+                move = move + "P";
+                enPassantMade = false;
+            }
+            else
+            {
+                move = move + "-";
+            }
             return move;
         }
         else
         {
-            return "";
+            return "A mistake has been made: The pice used in MakeMoveString did not exist (handmade note)";
         }
+    }
+
+    public void MoveFromeString(string move)
+        {
+
+        
+            int x = -1;
+            int y = -1;
+        
+            if (move == "O-O---")
+            {
+                if (isWhiteTurn)
+                {
+                    BoardSelection(4, 0);
+                    MovePices(6, 0);
+                    return;
+                } else { print("Rokade not possible"); }
+            }
+            if (move == "O-O+++") 
+            {
+                if (!isWhiteTurn)
+                {
+                    BoardSelection(4, 7);
+                    MovePices(6, 7);
+                    return;
+                } else {print("Rokade not possible");}
+            }
+            if (move == "O-O-O-")
+            {
+                if (isWhiteTurn)
+                {
+                    BoardSelection(4, 0);
+                    MovePices(2, 0);
+                    return;
+                } else { print("Rokade not possible"); }
+            }
+            if (move == "O-O-O+") 
+            {
+                if (!isWhiteTurn)
+                {
+                    BoardSelection(4, 7);
+                    MovePices(2, 7);
+                    return;
+                } else { print("Rokade not possible"); }
+            }
+
+            else if (move.Length == 6)
+            {
+                y = int.Parse(move.Substring(2, 1)) - 1;
+
+                //print(c.PicesLetter);
+                for (int j = 0; j < 8; j++)
+                {
+                    if (move.Substring(1, 1) == XKoordiantes[j, 0])
+                    {
+                        x = int.Parse(XKoordiantes[j, 1]);
+                    }
+                }
+
+                for (int i = 0; i < activeChessPices.Count; i++)
+                {
+                    Pices c = activeChessPices[i].GetComponent<Pices>();
+                    if (c.PicesLetter.ToString() == move.Substring(0, 1))
+                    {
+                   
+                    
+                        if (c.CurrentX == x && c.CurrentY == y)
+                        {
+                            for (int j = 0; j < 8; j++)
+                            {
+                                if (move.Substring(3, 1) == XKoordiantes[j, 0])
+                                {
+                                    x = int.Parse(XKoordiantes[j, 1]);
+                                }
+                            }
+                            y = int.Parse(move.Substring(4, 1)) - 1;
+                            BoardSelection(c.CurrentX, c.CurrentY);
+                            MovePices(x, y);
+                            return;
+                        }
+                    }
+                }
+            } //if a non pownd moves with more than one pice posability
+        }
+
+    public void MoveBack()
+    {
+
     }
 
     private void BoardSelection(int x, int y)
@@ -492,161 +583,6 @@ public class Board_Manager : MonoBehaviour {
         return AllMoves;
     }
 
-    public void MoveFromeString(string move)
-    {
-        int x = -1;
-        int y = -1;
-        if (move == "O-O")
-        {
-            if (isWhiteTurn)
-            {
-                BoardSelection(4, 0);
-                MovePices(6, 0);
-                return;
-            }
-            else
-            {
-                BoardSelection(4, 7);
-                MovePices(6, 7);
-                return;
-            }
-        }
-        if (move == "O-O-O")
-        {
-            if (isWhiteTurn)
-            {
-                BoardSelection(4, 0);
-                MovePices(2, 0);
-                return;
-            }
-            else
-            {
-                BoardSelection(4, 7);
-                MovePices(2, 7);
-                return;
-            }
-        }
-        if (move.Length == 2) //if pund moved with no kills
-        {
-            y = int.Parse(move.Substring(1, 1)) - 1;
-            for (int i = 0; i < 8; i++)
-            {
-                if (move.Substring(0, 1) == XKoordiantes[i, 0])
-                {
-                    x = int.Parse(XKoordiantes[i, 1]);
-                }
-            }
-            for (int i = 0; i < 8; i++)
-            {
-                for (int j = 0; j < 8; j++)
-                {
-                    if (piceses[i, j] != null
-                        && piceses[i, j].isWhite == isWhiteTurn
-                        && piceses[i, j].PicesLetter == ' ')
-                    {
-                        if (piceses[i, j].PossibleMove()[x, y])
-                        {
-                            BoardSelection(i, j);
-                            MovePices(x, y);
-                            return;
-                        }
-                    }
-                }
-            }
-        } //if it is a pund move
-        else if (move.Length == 3) 
-        {
-            // if it is a 3 lettered pown move
-            for (int i = 0; i < 8; i++)
-            {
-                if (move.Substring(0, 1) == XKoordiantes[i, 0])
-                {
-                    for (int j = 0; j < 8; j++)
-                    {
-                        if (XKoordiantes[j, 0] == move.Substring(1, 0))
-                        {
-                            x = int.Parse(XKoordiantes[j, 1]);
-                        }
-                    }
-                    y = int.Parse(move.Substring(2, 1)) - 1;
-                    for (int j = 0; j < activeChessPices.Count; j++)
-                    {
-                        Pices c = activeChessPices[j].GetComponent<Pices>();
-                        if (c.PicesLetter == ' ' && XKoordiantes[c.CurrentX, 1] == move.Substring(0, 1))
-                        {
-                            BoardSelection(c.CurrentX, c.CurrentY);
-                            MovePices(x, y);
-                            return;
-                        }
-                    }
-                }
-            }
-
-            // if it is not a pound
-            y = int.Parse(move.Substring(2, 1)) - 1;
-            for (int i = 0; i < 8; i++)
-            {
-                if (move.Substring(1, 1) == XKoordiantes[i, 0])
-                {
-                    x = int.Parse(XKoordiantes[i, 1]);
-                }
-            }
-            for (int i = 0; i < 8; i++)
-            {
-                for (int j = 0; j < 8; j++)
-                {
-                    if (piceses[i, j] != null
-                        && piceses[i, j].isWhite == isWhiteTurn
-                        && piceses[i, j].PicesLetter.ToString() == move.Substring(0, 1))
-                    {
-                        if (piceses[i, j].PossibleMove()[x, y])
-                        {
-                            BoardSelection(i, j);
-                            MovePices(x, y);
-                            return;
-                        }
-                    }
-                }
-            }
-        } //if a non pund pice moved with more then one pown posability or a non pund move with only pice one posability
-        else if (move.Length == 4)
-        {
-            y = int.Parse(move.Substring(3, 1)) - 1;
-            for (int i = 0; i < activeChessPices.Count; i++)
-            {
-                Pices c = activeChessPices[i].GetComponent<Pices>();
-                if (c.PicesLetter.ToString() == move.Substring(0, 1))
-                {
-                    print(c.PicesLetter);
-                    for (int j = 0; j < 8; j++)
-                    {
-                        if (move.Substring(1, 1) == XKoordiantes[j, 0])
-                        {
-                            x = int.Parse(XKoordiantes[j, 1]);
-                        }
-                    }
-
-                    print(x);
-                    if (c.CurrentX == x)
-                    {
-                        
-                        for (int j = 0; j < 8; j++)
-                        {
-                            if (move.Substring(2, 1) == XKoordiantes[j, 0])
-                            {
-                                x = int.Parse(XKoordiantes[j, 1]);
-                            }
-                        }
-                        
-                        BoardSelection(c.CurrentX,c.CurrentY);
-                        MovePices(x, y);
-                        return;
-                    }
-                }
-            }
-        } //if a non pownd moves with more than one pice posability
-    }
-
     private void EndGame()
     {
         //printing wining team
@@ -664,6 +600,7 @@ public class Board_Manager : MonoBehaviour {
             Destroy (go);
         }
 
+        MoveHistory.Clear();
         isWhiteTurn = true; //reseting turn
         BoardHeighlights.Instance.HideHighlights (); //hiding all heighlights
         SpawnAllCehssPices(); //respawning pieses in start position

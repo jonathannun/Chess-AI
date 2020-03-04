@@ -11,7 +11,6 @@ public class RandomChouser : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        print("start game");
         moves = new List<string>();
     }
 

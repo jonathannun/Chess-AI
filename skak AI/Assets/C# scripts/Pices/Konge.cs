@@ -131,7 +131,7 @@ public class Konge : Pices {
                             if (c.isWhite != isWhite && c.oldMoves[i + n, 0])
                             {
                                 legalRokade = false;
-                                print("disturbuing pice: " + c.PicesLetter + " short " + c.isWhite);
+                                //print("disturbuing pice: " + c.PicesLetter + " short " + c.isWhite);
                                 break; //if found thats it
                             }
                         }
@@ -155,7 +155,7 @@ public class Konge : Pices {
                             if (c.isWhite != isWhite && c.oldMoves[i - n, 0])
                             {
                                 legalRokade = false;
-                                print("disturbuing pice:: " + c.PicesLetter + " long " + c.isWhite);
+                                //print("disturbuing pice:: " + c.PicesLetter + " long " + c.isWhite);
                                 break; //if found thats it
                             }
                         }
@@ -180,7 +180,7 @@ public class Konge : Pices {
                             if (c.isWhite != isWhite && c.oldMoves[i + n, 7] || c.isWhite != isWhite && c.oldMoves[i, 7])
                             {
                                 legalRokade = false;
-                                print("disturbuing pice: " + c.PicesLetter + " short " + c.isWhite);
+                                //print("disturbuing pice: " + c.PicesLetter + " short " + c.isWhite);
                                 break; //if found thats it
                             }
                         }
@@ -204,7 +204,7 @@ public class Konge : Pices {
                             if (c.isWhite != isWhite && c.oldMoves[i - n, 7] || c.isWhite != isWhite && c.oldMoves[i, 7])
                             {
                                 legalRokade = false;
-                                print("disturbuing pice: " + c.PicesLetter + " long " + c.isWhite);
+                                //print("disturbuing pice: " + c.PicesLetter + " long " + c.isWhite);
                                 break; //if found thats it
                             }
                         }

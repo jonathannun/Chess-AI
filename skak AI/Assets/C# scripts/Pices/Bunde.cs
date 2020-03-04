@@ -6,7 +6,7 @@ public class Bunde : Pices {
 
     private void Start()
     {
-        PicesLetter = ' ';
+        PicesLetter = 'P';
     }
 
     public override bool[,] PossibleMove()
