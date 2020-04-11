@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Løber : Pices {
-
     private void Start()
     {
         PicesLetter = 'B';

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Konge : Pices {
-
     private void Start()
     {
         PicesLetter = 'K';

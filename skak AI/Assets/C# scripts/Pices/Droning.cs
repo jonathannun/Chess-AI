@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Droning : Pices {
-
     private void Start()
     {
         PicesLetter = 'Q';

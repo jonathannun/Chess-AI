@@ -6,6 +6,7 @@ public class Board_Manager : MonoBehaviour {
     public static Board_Manager Instance { set; get; }
     private bool[,] allowedMoves { set; get; }
     public List<string> MoveHistory;
+    public string[] FixedMoveHistory;
 
     public Pices[,] piceses { set; get; }
     private Pices selectedPices;
@@ -17,6 +18,7 @@ public class Board_Manager : MonoBehaviour {
     private int selectionY = -1;
     public int[] enPassant { set; get; }
     private bool enPassantMade;
+    
 
     public GameObject Board;
     public List<GameObject> chessPicesPrefabs;
@@ -32,6 +34,9 @@ public class Board_Manager : MonoBehaviour {
     public bool SortRokade;
     private bool whiteCheck;
     private bool blackCheck;
+
+    public bool isMinimaxing = false;
+    public bool GameEnded = false;
 
     private void Start()
     {
@@ -70,9 +75,33 @@ public class Board_Manager : MonoBehaviour {
             List<string> Moveses = AllMoves();
             for (int i = 0; i < Moveses.Count; i++)
             {
-                //print(Moveses[i]);
+                print(Moveses[i]);
             }
         } //find all moves
+        if (Input.GetKeyDown("r")) 
+        {
+            ReversMove();
+        } //reverse button
+        if (Input.GetKeyDown("n"))
+        {
+            foreach (GameObject g in activeChessPices) 
+            {
+                Pices c = g.GetComponent<Pices>();
+                print(c.PicesLetter);
+            }
+            
+        } //Selected pice letter
+        if (Input.GetKeyDown("h"))
+        {
+            foreach (string m in MoveHistory) 
+            {
+                print(m);
+            }
+        } //Print history
+        if (Input.GetKeyDown("l"))
+        {
+            print(MoveHistory.Count);
+        }
     } //gameloop
 
     private void SelectPices(int x, int y)
@@ -115,6 +144,8 @@ public class Board_Manager : MonoBehaviour {
 
     private void MovePices(int x, int y)
     {
+        enPassantMade = false;
+
         if (allowedMoves[x,y])
         {
             Pices c = piceses[x, y];
@@ -127,9 +158,13 @@ public class Board_Manager : MonoBehaviour {
 
                 if (c.GetType() == typeof(Konge))
                 {
-                    //win and end game
-                    EndGame ();
-                    return;
+                    if (!isMinimaxing) 
+                    {
+                        //win and end game
+                        GameEnded = true;
+                        EndGame(true);
+                        return;
+                    }
                 }
             } //if there is an oponnent piece on place kill it 
 
@@ -179,7 +214,6 @@ public class Board_Manager : MonoBehaviour {
                     enPassant[1] = y + 1;
                 } //saving pawn move for enPassant
             } //Promotion
-
             if (selectedPices.GetType() == typeof(Konge) && !selectedPices.HasMoved) //Rokade
             {
                 if (x == 2 && y == 0) //white long Rokade
@@ -302,6 +336,7 @@ public class Board_Manager : MonoBehaviour {
             isWhiteTurn = !isWhiteTurn;
         }
 
+        
         BoardHeighlights.Instance.HideHighlights();
         selectedPices = null;
     } //Moving Pice
@@ -428,12 +463,11 @@ public class Board_Manager : MonoBehaviour {
                 return "O-O+++";
             }
         }
-
         
         if (c != null)
         {
             string move = ""; //initialising string
-            move = move + c.PicesLetter.ToString(); //adding pice letter to string
+            move = move + c.PicesLetter.ToString();
             move = move + XKoordiantes[c.CurrentX, 0]; //adding start x koordianl letter to string
             move = move + (c.CurrentY+1).ToString(); //adding start y koordinat to string
             move = move + XKoordiantes[x, 0]; //adding x koordianl letter to string
@@ -445,7 +479,6 @@ public class Board_Manager : MonoBehaviour {
             else if (enPassantMade) 
             {
                 move = move + "P";
-                enPassantMade = false;
             }
             else
             {
@@ -461,8 +494,6 @@ public class Board_Manager : MonoBehaviour {
 
     public void MoveFromeString(string move)
         {
-
-        
             int x = -1;
             int y = -1;
         
@@ -475,7 +506,7 @@ public class Board_Manager : MonoBehaviour {
                     return;
                 } else { print("Rokade not possible"); }
             }
-            if (move == "O-O+++") 
+            else if (move == "O-O+++") 
             {
                 if (!isWhiteTurn)
                 {
@@ -484,7 +515,7 @@ public class Board_Manager : MonoBehaviour {
                     return;
                 } else {print("Rokade not possible");}
             }
-            if (move == "O-O-O-")
+            else if (move == "O-O-O-")
             {
                 if (isWhiteTurn)
                 {
@@ -493,7 +524,7 @@ public class Board_Manager : MonoBehaviour {
                     return;
                 } else { print("Rokade not possible"); }
             }
-            if (move == "O-O-O+") 
+            else if (move == "O-O-O+") 
             {
                 if (!isWhiteTurn)
                 {
@@ -507,7 +538,6 @@ public class Board_Manager : MonoBehaviour {
             {
                 y = int.Parse(move.Substring(2, 1)) - 1;
 
-                //print(c.PicesLetter);
                 for (int j = 0; j < 8; j++)
                 {
                     if (move.Substring(1, 1) == XKoordiantes[j, 0])
@@ -519,10 +549,8 @@ public class Board_Manager : MonoBehaviour {
                 for (int i = 0; i < activeChessPices.Count; i++)
                 {
                     Pices c = activeChessPices[i].GetComponent<Pices>();
-                    if (c.PicesLetter.ToString() == move.Substring(0, 1))
+                    if (c.PicesLetter.ToString() == move.Substring(0, 1) || c.PicesLetter.ToString() == "F") //F is when the revers EnPassent is made and the pawn letter hasent been initiatet yet
                     {
-                   
-                    
                         if (c.CurrentX == x && c.CurrentY == y)
                         {
                             for (int j = 0; j < 8; j++)
@@ -542,10 +570,14 @@ public class Board_Manager : MonoBehaviour {
             } //if a non pownd moves with more than one pice posability
         }
 
-    public void MoveBack()
+    public void ReversMove()
     {
-
-    }
+        EndGame(false);
+        for (int i = 0; i < FixedMoveHistory.Length - 1; i++) 
+        {
+            MoveFromeString(FixedMoveHistory[i]);
+        }
+    } //Revers last move in history
 
     private void BoardSelection(int x, int y)
     {
@@ -565,7 +597,6 @@ public class Board_Manager : MonoBehaviour {
         for (int i = 0; i < activeChessPices.Count; i++)
         {
             Pices c = activeChessPices[i].GetComponent<Pices>();
-            //BoardSelection(c.CurrentX, c.CurrentY);
             if (c.isWhite == isWhiteTurn)
             {
                 for (int k = 0; k < 8; k++)
@@ -583,26 +614,40 @@ public class Board_Manager : MonoBehaviour {
         return AllMoves;
     }
 
-    private void EndGame()
+    public void EndGame(bool clearHistory)
     {
         //printing wining team
-        if (isWhiteTurn)
+        if (clearHistory) 
         {
-            print("white wins");
-        }
-        else
-        {
-            print("black wins");
-        }
-
-        foreach (GameObject go in activeChessPices) //removing all pices from scene
-        {
-            Destroy (go);
+            if (isWhiteTurn)
+            {
+                print("white wins");
+            }
+            else
+            {
+                print("black wins");
+            }
         }
 
-        MoveHistory.Clear();
-        isWhiteTurn = true; //reseting turn
-        BoardHeighlights.Instance.HideHighlights (); //hiding all heighlights
-        SpawnAllCehssPices(); //respawning pieses in start position
+        if (!GameEnded)
+        {
+            foreach (GameObject go in activeChessPices) //removing all pices from scene
+            {
+                Destroy(go);
+            }
+        }
+        
+        
+        if (!clearHistory) 
+        {
+            FixedMoveHistory = MoveHistory.ToArray();
+        }
+
+        if (!GameEnded)
+        {
+            isWhiteTurn = true; //reseting turn
+            BoardHeighlights.Instance.HideHighlights(); //hiding all heighlights
+            SpawnAllCehssPices(); //respawning pieses in start position
+        }
     } //Ending and resetting game
 }

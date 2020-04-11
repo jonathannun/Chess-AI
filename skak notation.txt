@@ -1,0 +1,13 @@
+The arengement of letters is ass follows:
+1. Pice Letter
+2. from x
+3. from y
+4. to x
+5. to y
+6. Death pice letter (if no pice died then -)
+
+Rokader:
+Black long rokade: O-O-O+
+White long rokade: O-O-O-
+Black short rokade: O-O+++
+White short rokade: O-O---

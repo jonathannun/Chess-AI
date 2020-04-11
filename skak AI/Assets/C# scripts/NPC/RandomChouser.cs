@@ -6,6 +6,7 @@ public class RandomChouser : MonoBehaviour
 {
     public bool IsActiveWhite;
     public bool IsActiveBlack;
+    public int waightCound;
     private List<string> moves;
 
     // Start is called before the first frame update
@@ -17,15 +18,24 @@ public class RandomChouser : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (IsActiveWhite && Board_Manager.Instance.isWhiteTurn) 
+        if (!Board_Manager.Instance.GameEnded) 
         {
-            moves = Board_Manager.Instance.AllMoves();
-            RandomMove(moves);
-        }
-        if (IsActiveBlack && !Board_Manager.Instance.isWhiteTurn)
-        {
-            moves = Board_Manager.Instance.AllMoves();
-            RandomMove(moves);
+            if (IsActiveWhite && Board_Manager.Instance.isWhiteTurn)
+            {
+                if (Time.frameCount % waightCound == 0)
+                {
+                    moves = Board_Manager.Instance.AllMoves();
+                    RandomMove(moves);
+                }
+            }
+            if (IsActiveBlack && !Board_Manager.Instance.isWhiteTurn)
+            {
+                if ((Time.frameCount + (waightCound/2)) % waightCound == 0)
+                {
+                    moves = Board_Manager.Instance.AllMoves();
+                    RandomMove(moves);
+                }
+            }
         }
     }
 

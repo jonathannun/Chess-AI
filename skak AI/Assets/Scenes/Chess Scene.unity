@@ -260,6 +260,7 @@ GameObject:
   - component: {fileID: 1818268000}
   - component: {fileID: 1818267999}
   - component: {fileID: 1818268002}
+  - component: {fileID: 1818268003}
   m_Layer: 0
   m_Name: Board
   m_TagString: Untagged
@@ -294,6 +295,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MoveHistory: []
+  FixedMoveHistory: []
   Board: {fileID: 1465379181523740, guid: 3ae86e49304641d47b7803f8c9bbb3fb, type: 3}
   chessPicesPrefabs:
   - {fileID: 1443646738725120, guid: 1ce871c095e92db42bb6955b4b87c063, type: 3}
@@ -312,6 +314,8 @@ MonoBehaviour:
   isWhiteTurn: 1
   HvidRokade: 0
   SortRokade: 0
+  isMinimaxing: 0
+  GameEnded: 0
 --- !u!4 &1818268001
 Transform:
   m_ObjectHideFlags: 0
@@ -339,8 +343,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29b60a6b692ba2344b96c4a91345fa76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsActiveWhite: 1
+  IsActiveWhite: 0
+  IsActiveBlack: 0
+  waightCound: 150
+--- !u!114 &1818268003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1818267998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2dc6634750a453047bbad7a6a259497e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IsActiveWhite: 0
   IsActiveBlack: 1
+  IsSinglePlayerWhite: 0
+  IsSinglePlayerBlack: 1
+  WhiteSertchDebth: 0
+  BlackSertchDebth: 1
 --- !u!1 &1839887814
 GameObject:
   m_ObjectHideFlags: 0
@@ -426,10 +449,10 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1839887814}
-  m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}

@@ -1,0 +1,2 @@
+mig-dig -> 2-5 sek
+mig-dig-mig -> start 22 min

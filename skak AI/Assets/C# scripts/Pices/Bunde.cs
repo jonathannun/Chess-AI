@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Bunde : Pices {
-
+    string LastEnPassen;
     private void Start()
     {
         PicesLetter = 'P';
@@ -25,6 +25,7 @@ public class Bunde : Pices {
                 {
                     moves[CurrentX - 1, CurrentY + 1] = true;
                 } //EnPassen
+
                 c = Board_Manager.Instance.piceses [CurrentX - 1, CurrentY + 1];
                 if (c != null && !c.isWhite)
                 {
@@ -39,6 +40,7 @@ public class Bunde : Pices {
                 {
                     moves[CurrentX + 1, CurrentY + 1] = true;
                 } //EnPassen
+
                 c = Board_Manager.Instance.piceses[CurrentX + 1, CurrentY + 1];
                 if (c != null && !c.isWhite)
                 {
