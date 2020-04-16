@@ -18,12 +18,12 @@ public class Board_Manager : MonoBehaviour {
     private int selectionY = -1;
     public int[] enPassant { set; get; }
     private bool enPassantMade;
-    
+    public bool MiniMaxing; //to perevnt game from promoting ande enpassant if minimax is active
 
     public GameObject Board;
     public List<GameObject> chessPicesPrefabs;
     public List<GameObject> activeChessPices;
-    private string[,] XKoordiantes = new string[8, 2];
+    public string[,] XKoordiantes = new string[8, 2];
 
     private Quaternion piceOrientationBlack = Quaternion.Euler(-90,90,0);
     private Quaternion piceOrientationWhite = Quaternion.Euler(-90, -90, 0);
@@ -35,7 +35,7 @@ public class Board_Manager : MonoBehaviour {
     private bool whiteCheck;
     private bool blackCheck;
 
-    public bool isMinimaxing = false;
+    public bool isMinimaxing = false; //to prevent game from stopping while minimaxing
     public bool GameEnded = false;
 
     private void Start()
@@ -84,12 +84,8 @@ public class Board_Manager : MonoBehaviour {
         } //reverse button
         if (Input.GetKeyDown("n"))
         {
-            foreach (GameObject g in activeChessPices) 
-            {
-                Pices c = g.GetComponent<Pices>();
-                print(c.PicesLetter);
-            }
-            
+          Pices c = selectedPices.GetComponent<Pices>();
+          print(c.CurrentX + ":" + c.CurrentY);  
         } //Selected pice letter
         if (Input.GetKeyDown("h"))
         {
@@ -185,35 +181,37 @@ public class Board_Manager : MonoBehaviour {
             enPassant[0] = -1;
             enPassant[1] = -1;
 
-            if (selectedPices.GetType() == typeof(Bunde))
-            {
-                if (y == 7)
+            if (!MiniMaxing) {
+                if (selectedPices.GetType() == typeof(Bunde))
                 {
-                    activeChessPices.Remove(selectedPices.gameObject); //removing pawn from active piceses
-                    Destroy(selectedPices.gameObject); //removing pawn from game
-                    SpawnChessPices(1,x,y,piceOrientationWhite); //Spawning rook in game
-                    selectedPices = piceses[x, y]; //selecting rook
-                } //white promotion
+                    if (y == 7)
+                    {
+                        activeChessPices.Remove(selectedPices.gameObject); //removing pawn from active piceses
+                        Destroy(selectedPices.gameObject); //removing pawn from game
+                        SpawnChessPices(1,x,y,piceOrientationWhite); //Spawning rook in game
+                        selectedPices = piceses[x, y]; //selecting rook
+                    } //white promotion
 
-                if (y == 0)
-                {
-                    activeChessPices.Remove(selectedPices.gameObject);
-                    Destroy(selectedPices.gameObject);
-                    SpawnChessPices(7, x, y, piceOrientationBlack);
-                    selectedPices = piceses[x, y];
-                } //black promotion
+                    if (y == 0)
+                    {
+                        activeChessPices.Remove(selectedPices.gameObject);
+                        Destroy(selectedPices.gameObject);
+                        SpawnChessPices(7, x, y, piceOrientationBlack);
+                        selectedPices = piceses[x, y];
+                    } //black promotion
 
-                if (selectedPices.CurrentY == 1 && y == 3) 
-                {
-                    enPassant[0] = x;
-                    enPassant[1] = y - 1;
-                } //saving pawn move for enPassant
-                else if (selectedPices.CurrentY == 6 && y == 4) 
-                {
-                    enPassant[0] = x;
-                    enPassant[1] = y + 1;
-                } //saving pawn move for enPassant
-            } //Promotion
+                    if (selectedPices.CurrentY == 1 && y == 3) 
+                    {
+                        enPassant[0] = x;
+                        enPassant[1] = y - 1;
+                    } //saving pawn move for enPassant
+                    else if (selectedPices.CurrentY == 6 && y == 4) 
+                    {
+                        enPassant[0] = x;
+                        enPassant[1] = y + 1;
+                    } //saving pawn move for enPassant
+                } //Promotion
+            }
             if (selectedPices.GetType() == typeof(Konge) && !selectedPices.HasMoved) //Rokade
             {
                 if (x == 2 && y == 0) //white long Rokade

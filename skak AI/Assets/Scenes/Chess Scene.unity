@@ -261,6 +261,7 @@ GameObject:
   - component: {fileID: 1818267999}
   - component: {fileID: 1818268002}
   - component: {fileID: 1818268003}
+  - component: {fileID: 1818268004}
   m_Layer: 0
   m_Name: Board
   m_TagString: Untagged
@@ -296,6 +297,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MoveHistory: []
   FixedMoveHistory: []
+  MiniMaxing: 0
   Board: {fileID: 1465379181523740, guid: 3ae86e49304641d47b7803f8c9bbb3fb, type: 3}
   chessPicesPrefabs:
   - {fileID: 1443646738725120, guid: 1ce871c095e92db42bb6955b4b87c063, type: 3}
@@ -343,7 +345,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29b60a6b692ba2344b96c4a91345fa76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsActiveWhite: 0
+  IsActiveWhite: 1
   IsActiveBlack: 0
   waightCound: 150
 --- !u!114 &1818268003
@@ -359,11 +361,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsActiveWhite: 0
-  IsActiveBlack: 1
-  IsSinglePlayerWhite: 0
-  IsSinglePlayerBlack: 1
+  IsActiveBlack: 0
+  IsWorseBlack: 0
+  IsWorseWhite: 0
   WhiteSertchDebth: 0
   BlackSertchDebth: 1
+--- !u!114 &1818268004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1818267998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bfc27b3dc17fb142a527715e981d10d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IsActiveWhite: 0
+  IsActiveBlack: 1
+  YourKingsWhite: 0
+  YourKingsBlack: 1
+  WinOrientedWhite: 0
+  WinOrientedBlack: 1
+  waightCound: 150
 --- !u!1 &1839887814
 GameObject:
   m_ObjectHideFlags: 0
